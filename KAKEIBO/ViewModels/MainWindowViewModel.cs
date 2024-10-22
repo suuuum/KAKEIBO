@@ -10,10 +10,11 @@ namespace KAKEIBO.ViewModels
             get { return _title; }
             set { SetProperty(ref _title, value); }
         }
+        public CsvImportControlViewModel CsvImportViewModel { get; }
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(CsvImportControlViewModel csvImportViewModel)
         {
-
+            CsvImportViewModel = csvImportViewModel;
         }
     }
 }
