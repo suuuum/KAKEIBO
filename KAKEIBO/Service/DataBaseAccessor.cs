@@ -10,7 +10,7 @@ namespace KAKEIBO.Service
     /// <summary>
     /// DataBaseにアクセスします。
     /// </summary>
-    public class DataBaseAccessor:IDataAccessor
+    public class DataBaseAccessor : IDataAccessor
     {
         private const string DbName = "card_payment.db";
         private string DbPath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DbName);
@@ -75,6 +75,14 @@ namespace KAKEIBO.Service
                                 Description TEXT,
                                 Category TEXT
                             )";
+                        command.ExecuteNonQuery();
+
+                        command.CommandText = @"
+                            CREATE TABLE IF NOT EXISTS Bookmarks (
+                                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                DisplayName TEXT NOT NULL,
+                                Url TEXT NOT NULL
+                            );";
                         command.ExecuteNonQuery();
                     }
                 }
@@ -147,6 +155,52 @@ namespace KAKEIBO.Service
             {
                 AddPaymentRecords(records);
             });
+        }
+
+        public void AddBookmark(Bookmark bookmark)
+        {
+            using (var connection = new SQLiteConnection($"Data Source={DbPath};Version=3;"))
+            {
+                connection.Open();
+                var command = new SQLiteCommand("INSERT INTO Bookmarks (DisplayName, Url) VALUES (@DisplayName, @Url)", connection);
+                command.Parameters.AddWithValue("@DisplayName", bookmark.DisplayName);
+                command.Parameters.AddWithValue("@Url", bookmark.Url);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteBookmark(int id)
+        {
+            using (var connection = new SQLiteConnection($"Data Source={DbPath};Version=3;"))
+            {
+                connection.Open();
+                var command = new SQLiteCommand("DELETE FROM Bookmarks WHERE Id = @Id", connection);
+                command.Parameters.AddWithValue("@Id", id);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public List<Bookmark> GetBookmarks()
+        {
+            var bookmarks = new List<Bookmark>();
+            using (var connection = new SQLiteConnection($"Data Source={DbPath};Version=3;"))
+            {
+                connection.Open();
+                var command = new SQLiteCommand("SELECT * FROM Bookmarks", connection);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        bookmarks.Add(new Bookmark
+                        {
+                            Id = reader.GetInt32(0),
+                            DisplayName = reader.GetString(1),
+                            Url = reader.GetString(2)
+                        });
+                    }
+                }
+            }
+            return bookmarks;
         }
     }
 }

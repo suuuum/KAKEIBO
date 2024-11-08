@@ -44,11 +44,7 @@ namespace KAKEIBO
             containerRegistry.RegisterSingleton<CsvImportControlViewModel>();
             containerRegistry.RegisterSingleton<IDialogService, Service.DialogService>();
             containerRegistry.RegisterSingleton<IErrorHandlingService, ErrorHandlingService>();
-
-        }
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
+            containerRegistry.RegisterSingleton<WindowAgent>();
 
             // DataBaseAccessorのCreateメソッドを呼び出す
             var dataAccessor = Container.Resolve<IDataAccessor>();
@@ -56,6 +52,11 @@ namespace KAKEIBO
             {
                 dbAccessor.CreateDatabase();
             }
+
+        }
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

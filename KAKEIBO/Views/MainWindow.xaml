@@ -5,24 +5,42 @@
         xmlns:avalonDock="https://github.com/Dirkster99/AvalonDock"
         xmlns:local="clr-namespace:KAKEIBO.Views"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <avalonDock:DockingManager x:Name="dockManager">
-            <avalonDock:LayoutRoot>
-                <avalonDock:LayoutPanel>
-                    <avalonDock:LayoutDocumentPane>
-                        <avalonDock:LayoutDocument Title="CSV Import" ContentId="CsvImportDocument">
-                            <local:CsvImportControl />
-                        </avalonDock:LayoutDocument>
-                        <avalonDock:LayoutDocument Title="Payment Viewer" ContentId="PaymentViewerDocument">
-                            <local:PaymentViewerControl />
-                        </avalonDock:LayoutDocument>
-                        <avalonDock:LayoutDocument Title="Trend Viewer" ContentId="TrendViewerDocument">
-                            <local:TrendControl />
-                        </avalonDock:LayoutDocument>
-                    </avalonDock:LayoutDocumentPane>
-                </avalonDock:LayoutPanel>
-            </avalonDock:LayoutRoot>
-        </avalonDock:DockingManager>
-    </Grid>
+        Title="MainWindow" Height="900" Width="1600">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Background="#001016" Foreground="White" >
+            <MenuItem Header="CSV Import" Command="{Binding OpenCsvImportCommand}"/>
+            <MenuItem Header="Payment Viewer" Command="{Binding OpenPaymentViewerCommand}"/>
+            <MenuItem Header="Trend" Command="{Binding OpenTrendCommand}"/>
+            <MenuItem Header="Web Browser" Command="{Binding OpenWebBrowserCommand}"/>
+        </Menu>
+        <Grid>
+            <avalonDock:DockingManager x:Name="dockManager">
+                <avalonDock:LayoutRoot>
+                    <avalonDock:LayoutPanel Orientation="Horizontal" x:Name="MainPanel">
+                        <avalonDock:LayoutDocumentPane>
+                            <avalonDock:LayoutDocument Title="Browser" ContentId="Browser1">
+                                <local:WebBrowserControl />
+                            </avalonDock:LayoutDocument>
+                        </avalonDock:LayoutDocumentPane>
+
+                        <avalonDock:LayoutPanel Orientation="Vertical">
+                            <avalonDock:LayoutDocumentPane>
+                                <avalonDock:LayoutDocument Title="Payment Viewer" ContentId="PaymentViewerDocument">
+                                    <local:PaymentViewerControl />
+                                </avalonDock:LayoutDocument>
+                                <avalonDock:LayoutDocument Title="CSV Import" ContentId="CsvImportDocument">
+                                    <local:CsvImportControl />
+                                </avalonDock:LayoutDocument>
+                            </avalonDock:LayoutDocumentPane>
+                            <avalonDock:LayoutDocumentPane >
+                                <avalonDock:LayoutDocument Title="Trend Viewer" ContentId="TrendViewerDocument">
+                                    <local:TrendControl />
+                                </avalonDock:LayoutDocument>
+                            </avalonDock:LayoutDocumentPane>
+                        </avalonDock:LayoutPanel>
+                    </avalonDock:LayoutPanel>
+                </avalonDock:LayoutRoot>
+            </avalonDock:DockingManager>
+        </Grid>
+    </DockPanel>
 </Window>
