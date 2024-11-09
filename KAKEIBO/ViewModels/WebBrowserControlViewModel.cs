@@ -1,13 +1,9 @@
-﻿using CefSharp;
-using CefSharp.Wpf;
-using KAKEIBO.Item;
+﻿using KAKEIBO.Item;
 using KAKEIBO.Service;
+using Microsoft.Web.WebView2.Wpf;
 using Prism.Commands;
 using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 
 namespace KAKEIBO.ViewModels
@@ -27,7 +23,9 @@ namespace KAKEIBO.ViewModels
         public string CurrentUrl
         {
             get { return _currentUrl; }
-            set { SetProperty(ref _currentUrl, value);
+            set
+            {
+                SetProperty(ref _currentUrl, value);
                 DisplayUrl = CurrentUrl;
             }
         }
@@ -46,8 +44,8 @@ namespace KAKEIBO.ViewModels
             set { SetProperty(ref _pageTitle, value); }
         }
 
-        private IWebBrowser _webBrowser;
-        public IWebBrowser WebBrowser
+        private WebView2 _webBrowser;
+        public WebView2 WebBrowser
         {
             get { return _webBrowser; }
             set { SetProperty(ref _webBrowser, value); }
@@ -66,11 +64,10 @@ namespace KAKEIBO.ViewModels
         public DelegateCommand ReloadCommand { get; private set; }
         public DelegateCommand NavigateCommand { get; private set; }
         public DelegateCommand<string> NavigateBookmarkCommand { get; private set; }
-
         public DelegateCommand AddBookmarkCommand { get; private set; }
         public DelegateCommand<int?> DeleteBookmarkCommand { get; private set; }
 
-        public WebBrowserControlViewModel(DataBaseAccessor accessor,WindowAgent windowAgent)
+        public WebBrowserControlViewModel(DataBaseAccessor accessor, WindowAgent windowAgent)
         {
             _accessor = accessor;
             _window_agent = windowAgent;
@@ -86,40 +83,32 @@ namespace KAKEIBO.ViewModels
         }
 
         public void SetTitle(string title)
-        {
-            _window_agent.SetWebBrowserTitle(Id, title);
-        }
+            => _window_agent.SetWebBrowserTitle(Id, title);
+        public void OpenNewBrowserWindow(string url)
+          => _window_agent.OpenAnotherTabWebBrowserDoc(url);
 
-        private async void Back()
+        private void Back()
         {
-            if (WebBrowser.CanGoBack)
+            if (WebBrowser.CoreWebView2.CanGoBack)
             {
-                WebBrowser.Back();
-                await WebBrowser.WaitForNavigationAsync();
+                WebBrowser.CoreWebView2.GoBack();
                 DisplayUrl = CurrentUrl;
             }
         }
-
-        private async void Forward()
+        private void Forward()
         {
-            if (WebBrowser.CanGoForward)
+            if (WebBrowser.CoreWebView2.CanGoForward)
             {
-                WebBrowser.Forward();
-                await WebBrowser.WaitForNavigationAsync();
+                WebBrowser.CoreWebView2.GoForward();
                 DisplayUrl = CurrentUrl;
             }
         }
 
         private void Reload()
-        {
-            WebBrowser.Reload();
-        }
+            => WebBrowser.Reload();
 
         private void Navigate()
-        {
-
-            CurrentUrl = DisplayUrl;
-        }
+            => CurrentUrl = DisplayUrl;
 
         private void Navigate(string url)
         {

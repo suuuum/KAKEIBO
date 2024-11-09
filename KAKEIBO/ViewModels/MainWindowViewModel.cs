@@ -20,7 +20,6 @@ namespace KAKEIBO.ViewModels
         public DelegateCommand OpenCsvImportCommand { get; private set; }
         public DelegateCommand OpenPaymentViewerCommand { get; private set; }
         public DelegateCommand OpenTrendCommand { get; private set; }
-
         public DelegateCommand OpenWebBrowserCommand { get; private set; }
 
         public MainWindowViewModel(WindowAgent windowAgent)
@@ -34,16 +33,12 @@ namespace KAKEIBO.ViewModels
 
 
         private void OpenCsvImport()
-        =>_window_agent.OpenCsvImport();
-
+        => _window_agent.OpenCsvImport();
         private void OpenPaymentViewer()
         => _window_agent.OpenPaymentViewer();
-
         private void OpenTrend()
-        =>_window_agent.OpenTrend();
+        => _window_agent.OpenTrend();
         private void OpenWebBrowser()
-        {
-            _window_agent.AddWebBrouserDoc();
-        }
+         => _window_agent.AddWebBrowserDoc();
     }
 }

@@ -127,9 +127,9 @@ namespace KAKEIBO.ViewModels
         }
 
         public List<string> Categories { get; } = new List<string>
-    {
-        "食費", "積み立て", "サブスク", "日用品", "雑費", "交際費", "交通費", "通信費", "光熱費", "娯楽", "その他"
-    };
+        {
+            "食費", "積み立て", "サブスク", "日用品", "雑費", "交際費", "交通費", "通信費", "光熱費", "娯楽", "その他"
+        };
 
         public string SelectedCategory
         {

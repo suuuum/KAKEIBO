@@ -15,21 +15,34 @@ namespace KAKEIBO.Service
         public static MainWindow MainWindow { get; set; }
 
         /// <summary>
-        /// 設定されている各ウィンドウIDの最大値(ウィンドウが追加されると増える)
+        /// 設定されているブラウザIDの最大値(ウィンドウが追加されると増える)
         /// </summary>
         private long BrowserIdMax { get; set; } = 1;
 
 
         /// <summary>
-        /// WebBrowser画面をメインウインドウに追加します。
+        /// 新規WebBrowser画面をメインウインドウに追加します。
         /// </summary>
-        public void AddWebBrouserDoc()
+        public void AddWebBrowserDoc()
         {
             var newBrowserDocLayout = new LayoutDocument { Title = "Browser", ContentId = "Browser" + (BrowserIdMax + 1), Content = new WebBrowserControl() };
             BrowserIdMax++;
             ((WebBrowserControlViewModel)((WebBrowserControl)newBrowserDocLayout.Content).DataContext).Id = newBrowserDocLayout.ContentId;
             AddDocument<WebBrowserControl>(newBrowserDocLayout);
         }
+        /// <summary>
+        /// 別タブ表示でのWebBrowser画面追加を行います。
+        /// </summary>
+        public void OpenAnotherTabWebBrowserDoc(string url)
+        {
+            var window = new WebBrowserControl();
+            var newBrowserDocLayout = new LayoutDocument { Title = "Browser", ContentId = "Browser" + (BrowserIdMax + 1), Content = window };
+            BrowserIdMax++;
+            ((WebBrowserControlViewModel)((WebBrowserControl)newBrowserDocLayout.Content).DataContext).Id = newBrowserDocLayout.ContentId;
+            AddDocument<WebBrowserControl>(newBrowserDocLayout);
+            window.ViewModel.CurrentUrl = url;
+        }
+
         public void SetWebBrowserTitle(string contentId, string title)
          => SetTitile<WebBrowserControl>(contentId, title);
 
@@ -49,13 +62,32 @@ namespace KAKEIBO.Service
         /// <param name="docLayout">追加したいレイアウトドキュメント</param>
         private void AddDocument<T>(LayoutDocument docLayout) where T : UserControl
         {
+            //メインウィンドウのDocumentPaneのリストを取得
             var existingDocumentPanes = MainWindow.LayoutPanel.Descendents().OfType<LayoutDocumentPane>();
+            //指定された画面のクラスを持つDocumentPaneを取得
             var haveSameDocumentPane = existingDocumentPanes.FirstOrDefault(x => x.Descendents().OfType<LayoutDocument>().Any(x => x.Content.GetType() == typeof(T)));
             if (haveSameDocumentPane != null)
             {
                 haveSameDocumentPane.Children.Add(docLayout);
+                docLayout.IsActive = true;
+                return;
             }
-            else if (existingDocumentPanes.FirstOrDefault() != null)
+
+            //メインウィンドウに対象がない場合はフローティングウィンドウを探しに行く
+            var floatingWindows = GetFloatingWindows();
+            foreach (var window in floatingWindows)
+            {
+                haveSameDocumentPane = window.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault(x => x.Descendents().OfType<LayoutDocument>().Any(x => x.Content.GetType() == typeof(T)));
+                if (haveSameDocumentPane != null)
+                {
+                    haveSameDocumentPane.Children.Add(docLayout);
+                    docLayout.IsActive = true;
+                    return;
+                }
+            }
+
+            //同じ画面が存在しない場合はメインウィンドウに追加する
+            if (existingDocumentPanes.FirstOrDefault() != null)
             {
                 existingDocumentPanes.FirstOrDefault().Children.Add(docLayout);
             }
@@ -103,6 +135,7 @@ namespace KAKEIBO.Service
                 newDocpane.Children.Add(docLayout);
                 MainWindow.LayoutPanel.Children.Add(newDocpane);
             }
+            docLayout.IsActive = true;
         }
 
         /// <summary>

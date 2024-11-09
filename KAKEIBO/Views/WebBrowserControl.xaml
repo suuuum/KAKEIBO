@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:KAKEIBO.Views"
              xmlns:prism="http://prismlibrary.com/"
-             xmlns:cef="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
+             xmlns:wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
@@ -63,6 +63,8 @@
                 </MenuItem>
             </Menu>
         </Grid>
-        <cef:ChromiumWebBrowser Grid.Row="1" x:Name="browser" Address="{Binding CurrentUrl, Mode=TwoWay}" WebBrowser="{Binding WebBrowser}"/>
+        <Grid Background="{DynamicResource MaterialDesignPaper}" Grid.Row="1">
+            <wpf:WebView2  x:Name="browser" Source="{Binding CurrentUrl, Mode=TwoWay}"/>
+        </Grid>
     </Grid>
 </UserControl>
