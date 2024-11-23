@@ -50,19 +50,5 @@ namespace KAKEIBO.Service
 
             return records;
         }
-
-        public void DisplayImportedData(List<PaymentRecord> records)
-        {
-            Console.WriteLine("インポートされたデータ:");
-            Console.WriteLine("日付\t\t名称\t\t金額");
-            Console.WriteLine("----------------------------------------");
-
-            foreach (var record in records)
-            {
-                Console.WriteLine($"{record.Date:yyyy/MM/dd}\t{record.Description}\t{record.Amount:C}");
-            }
-
-            Console.WriteLine($"合計レコード数: {records.Count}");
-        }
     }
 }
